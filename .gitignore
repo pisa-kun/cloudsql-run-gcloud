@@ -1,0 +1,39 @@
+# Go binary
+/bin/
+/*.exe
+/*.out
+/*.test
+
+# Go module cache
+/pkg/mod/
+
+# Dependency directories
+vendor/
+
+# IDE specific files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Build artifacts
+build/
+*.so
+*.dSYM/
+
+# Local environment files
+.env
+
+# Coverage files
+*.cov
+*.coverprofile
+
+# Docker files
+docker-compose.override.yml

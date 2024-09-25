@@ -29,16 +29,27 @@ gcloud sql databases create mydatabase --instance=my-postgres
 
 ```
 
-プライベートIPを設定:
+Cloud SQL Studioからアクセス
+
+テーブルの作成
 ```
-gcloud sql instances patch my-postgres --enable-private-ip
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL
+);
+```
+
+データの挿入
+```
+INSERT INTO users (name, age) VALUES 
+('Alice', 30),
+('Bob', 25),
+('Charlie', 35);
 
 ```
 
-こっち
-```
-gcloud sql instances patch my-postgres --network=my-vpc --assign-ip
-```
+**インスタンスにプライベートIPを割り当てはGUI経由で行っておく**
 
 ### Cloud SQLの接続情報を環境変数として設定
 環境変数に以下の情報を設定します。
@@ -182,16 +193,25 @@ docker push us-central1-docker.pkg.dev/<project-id>/my-repo/my-api:latest
 ```
 
 ### 4. Cloud Runにデプロイ
+サーバレスVPCコネクタの作成
+```
+gcloud compute networks vpc-access connectors create my-vpc-connector --region us-central1 --range 10.8.0.0/28 --network my-vpc
+
+```
+
+cloud runのデプロイ
 ```
 gcloud run deploy my-api \
     --image us-central1-docker.pkg.dev/<project-id>/my-repo/my-api:latest \
     --platform managed \
     --region us-central1 \
     --set-env-vars DB_USER=myuser,DB_PASSWORD=my-password,DB_NAME=mydatabase,DB_HOST=<cloud-sql-private-ip> \
-    --vpc-connector <vpc-connector-name> \
+    --vpc-connector my-vpc-connector \
     --allow-unauthenticated
 
 ```
+
+gcloud run deploy my-api --image us-central1-docker.pkg.dev/careful-isotope-423019-e1/my-repo/my-api:latest --platform managed --region us-central1 --set-env-vars DB_USER=myuser,DB_PASSWORD=my-password,DB_NAME=mydatabase,DB_HOST=careful-isotope-423019-e1:us-central1:my-postgres --vpc-connector my-vpc-connector --allow-unauthenticated
 
 ### 5. 動作確認
 デプロイが完了したら、Cloud RunのURLに/usersエンドポイントを追加して、APIにアクセスします。例えば、https://<your-cloud-run-url>/usersでユーザーリストが取得できるはずです。

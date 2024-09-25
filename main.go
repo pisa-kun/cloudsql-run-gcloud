@@ -46,6 +46,12 @@ func main() {
 	initDB()
 	defer db.Close()
 
+	port := os.Getenv("PORT") // 環境変数PORTを取得
+	if port == "" {
+		port = "8080" // デフォルトのポート
+	}
+
 	http.HandleFunc("/users", getUsers)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Printf("Starting server on port %s...", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil)) // 環境変数PORTでリッスン
 }
